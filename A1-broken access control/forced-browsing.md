@@ -4,28 +4,27 @@
 
 ## 1. Summary
 
-An **Insecure Direct Object Reference (IDOR)** vulnerability was identified in the chat report download functionality of the application.  
-By modifying the `file` parameter in an intercepted HTTP request, an authenticated user can access chat reports belonging to other users. This leads to exposure of sensitive information, including user credentials and private conversations.
+An Insecure Direct Object Reference (IDOR) vulnerability was identified in the chat report download functionality of the application. By modifying a numeric filename parameter in an intercepted HTTP request, an unauthenticated user can access chat reports belonging to other users. One of the exposed chat reports contained credentials for a target user provided by the lab.
+
 
 
 ## 2. Vulnerability Details
 
-- **Vulnerability Type:** Insecure Direct Object Reference (IDOR)
-- **OWASP Category:** A01 – Broken Access Control
-- **Affected Endpoint:**  
-```GET /download?file=2.txt```
-- **Authentication Required:** Yes (but insufficient authorization checks)
+The issue is classified as an Insecure Direct Object Reference (IDOR) and falls under OWASP Top 10 category A01 – Broken Access Control.  
+The affected endpoint is `GET /download?file=2.txt`.  
+Authentication is not required, and authorization checks are missing.
 
 
 ## 3. Steps to Reproduce
 
-1. Log in to the application as a normal authenticated user.
+1. Access the application without logging in.
 2. Navigate to the chatbot feature.
-3. Start a chat and generate a chat report.
-4. Download the generated chat report (e.g., `2.txt`).
+3. Interact with the chatbot to generate a chat conversation.
+4. Download the generated chat report (for example, `2.txt`).
 5. Intercept the download request using Burp Suite.
-6. Modify the `file` parameter value from `2.txt` to `1.txt`.
+6. Modify the `file` parameter from `2.txt` to `1.txt`.
 7. Forward the modified request to the server.
+8. Observe that the response contains another user’s chat report, which includes sensitive information such as credentials.
 
 
 ## 4. Proof of Concept (PoC)
